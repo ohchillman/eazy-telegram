@@ -25,9 +25,17 @@ import java.util.List;
 
 public class Telegram {
 
-    public static Message sendMessage(TelegramLongPollingBot bot, String userId, String messageText, Object keyboardMarkup, Integer replyToMessageId) {
+    public static Message sendMessage(TelegramLongPollingBot bot, Object userId, String messageText, Object keyboardMarkup, Integer replyToMessageId) {
         SendMessage message = new SendMessage();
-        message.setChatId(userId);
+
+        if (userId instanceof Long) {
+            message.setChatId(userId.toString());
+        } else if (userId instanceof String) {
+            message.setChatId((String) userId);
+        } else {
+            Logs.error(userId, "userId must be either Long or String");
+        }
+
         message.setParseMode("HTML");
         message.setText(messageText);
         message.setReplyMarkup(keyboardMarkup instanceof InlineKeyboardMarkup ? (InlineKeyboardMarkup) keyboardMarkup : (ReplyKeyboardMarkup) keyboardMarkup);
@@ -44,9 +52,17 @@ public class Telegram {
         }
     }
 
-    public static Message sendPhoto(TelegramLongPollingBot bot, String userId, String messageText, String photoUrl, Object keyboardMarkup, Integer replyToMessageId) {
+    public static Message sendPhoto(TelegramLongPollingBot bot, Object userId, String messageText, String photoUrl, Object keyboardMarkup, Integer replyToMessageId) {
         SendPhoto message = new SendPhoto();
-        message.setChatId(userId);
+
+        if (userId instanceof Long) {
+            message.setChatId(userId.toString());
+        } else if (userId instanceof String) {
+            message.setChatId((String) userId);
+        } else {
+            Logs.error(userId, "userId must be either Long or String");
+        }
+
         message.setParseMode("HTML");
         message.setPhoto(new InputFile(photoUrl));
         message.setCaption(messageText);
@@ -72,6 +88,32 @@ public class Telegram {
         return createKeyboardButtons(buttons, columns, maxButtonLength);
     }
 
+    public static ReplyKeyboardMarkup createReplyKeyboard(List<String> buttonLabels, int columns) {
+        List<List<KeyboardButton>> rowsInline = new ArrayList<>();
+        List<KeyboardButton> rowInline = new ArrayList<>();
+
+        for (int i = 0; i < buttonLabels.size(); i++) {
+            KeyboardButton button = new KeyboardButton();
+            button.setText(buttonLabels.get(i));
+            rowInline.add(button);
+
+            if ((i + 1) % columns == 0 || i == buttonLabels.size() - 1) {
+                rowsInline.add(rowInline);
+                rowInline = new ArrayList<>();
+            }
+        }
+
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+        for (List<KeyboardButton> row : rowsInline) {
+            KeyboardRow keyboardRow = new KeyboardRow();
+            keyboardRow.addAll(row);
+            keyboardRows.add(keyboardRow);
+        }
+        keyboardMarkup.setKeyboard(keyboardRows);
+        keyboardMarkup.setResizeKeyboard(true);
+        return keyboardMarkup;
+    }
 
     public static InlineKeyboardMarkup createKeyboardButtons(List<Button> buttons, int columns, int maxButtonLength) {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
@@ -113,10 +155,18 @@ public class Telegram {
     }
 
 
-    public static void editMessage(TelegramLongPollingBot bot, String chatId, int messageId, String newText, InlineKeyboardMarkup keyboardMarkup) {
+    public static void editMessage(TelegramLongPollingBot bot, Object userId, int messageId, String newText, InlineKeyboardMarkup keyboardMarkup) {
         EditMessageText editMessageText = new EditMessageText();
         editMessageText.setParseMode("HTML");
-        editMessageText.setChatId(chatId);
+
+        if (userId instanceof Long) {
+            editMessageText.setChatId(userId.toString());
+        } else if (userId instanceof String) {
+            editMessageText.setChatId((String) userId);
+        } else {
+            Logs.error(userId, "userId must be either Long or String");
+        }
+
         editMessageText.setMessageId(messageId);
         editMessageText.setText(newText);
         editMessageText.setReplyMarkup(keyboardMarkup);
@@ -124,15 +174,22 @@ public class Telegram {
         try {
             bot.execute(editMessageText);
         } catch (TelegramApiException e) {
-//            throw new RuntimeException(e);
-            Logs.error(chatId, e.getMessage());
+            Logs.error(userId, e.getMessage());
         }
     }
 
 
-    public static void editMedia(TelegramLongPollingBot bot, String chatId, int messageId, String caption, String mediaUrl, InlineKeyboardMarkup keyboardMarkup) {
+    public static void editMedia(TelegramLongPollingBot bot, Object userId, int messageId, String caption, String mediaUrl, InlineKeyboardMarkup keyboardMarkup) {
         EditMessageMedia editMessageMedia = new EditMessageMedia();
-        editMessageMedia.setChatId(chatId);
+
+        if (userId instanceof Long) {
+            editMessageMedia.setChatId(userId.toString());
+        } else if (userId instanceof String) {
+            editMessageMedia.setChatId((String) userId);
+        } else {
+            Logs.error(userId, "userId must be either Long or String");
+        }
+
         editMessageMedia.setMessageId(messageId);
 
         if (mediaUrl.endsWith(".jpg") || mediaUrl.endsWith(".jpeg") || mediaUrl.endsWith(".png")) {
@@ -156,20 +213,28 @@ public class Telegram {
         try {
             bot.execute(editMessageMedia);
         } catch (TelegramApiException e) {
-            Logs.error(chatId, e.getMessage());
+            Logs.error(userId, e.getMessage());
         }
     }
 
 
-    public static void deleteMessage(TelegramLongPollingBot bot, String chatId, int messageId) {
+    public static void deleteMessage(TelegramLongPollingBot bot, Object userId, int messageId) {
         DeleteMessage deleteMessage = new DeleteMessage();
-        deleteMessage.setChatId(chatId);
+
+        if (userId instanceof Long) {
+            deleteMessage.setChatId(userId.toString());
+        } else if (userId instanceof String) {
+            deleteMessage.setChatId((String) userId);
+        } else {
+            Logs.error(userId, "userId must be either Long or String");
+        }
+
         deleteMessage.setMessageId(messageId);
 
         try {
             bot.execute(deleteMessage);
         } catch (Exception e) {
-            Logs.error(chatId, e.getMessage());
+            Logs.error(userId, e.getMessage());
         }
     }
 
