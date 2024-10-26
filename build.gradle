@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-    id 'java'
     id 'application'
 }
 
@@ -9,13 +8,14 @@ repositories {
 }
 
 dependencies {
+    // Зависимости для тестирования
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
 
-    //Additional telegram libraries
+    // Telegram библиотеки
     implementation 'org.telegram:telegrambots:6.5.0'
     implementation 'org.telegram:telegrambots-meta:6.5.0'
 
-    //Logs
+    // Логирование
     implementation 'ch.qos.logback:logback-classic:1.5.6'
     implementation 'org.slf4j:slf4j-api:2.0.12'
 }
@@ -24,30 +24,48 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-apply plugin: 'base'
-
+// Сборка номера версии
 def buildNumberFile = file('buildNumber')
 def buildNumber = buildNumberFile.exists() ? buildNumberFile.text.toInteger() + 1 : 1
-
 buildNumberFile.text = buildNumber.toString()
 
+version = buildNumber.toString()
+
+// Настройки для сборки стандартного JAR
+java {
+    withSourcesJar()  // JAR с исходниками
+    withJavadocJar()  // JAR с документацией
+}
+
+jar {
+    archiveBaseName.set(rootProject.name)
+    archiveVersion.set(buildNumber.toString())
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE  // Устанавливаем стратегию для исключения дубликатов
+    from(sourceSets.main.output) {
+        include 'org/eazytg/lib/**'
+    }
+}
+
+// Задача для создания fatJar
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Main-Class': "org.eazytg.Main"
+        attributes 'Main-Class': 'org.eazytg.Main'  // Замените на главный класс вашего приложения
     }
+    archiveBaseName.set("${rootProject.name}-all")  // Имя для fatJar
+    archiveVersion.set(version.toString())
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE  // Добавляем стратегию для исключения дубликатов
 
-    archiveBaseName = "${rootProject.name}"
-    version = buildNumber.toString()
-
-    tasks.withType(Jar){
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
-
-    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
 
+// Добавление зависимости сборки от fatJar, чтобы он собирался вместе с build
+build.dependsOn fatJar
+
+// Очистка перед сборкой
 tasks.clean.doFirst {
-    delete deleteMe
-    deleteMe = []
+    delete 'build/libs', 'buildNumber'
 }
+
