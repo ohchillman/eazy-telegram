@@ -1,19 +1,71 @@
 plugins {
-    id 'java'
+    id 'java-library'
+    id 'application'
 }
-
-group = 'org.eazytg'
-version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    // Зависимости для тестирования
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
+
+    // Telegram библиотеки
+    implementation 'org.telegram:telegrambots:6.5.0'
+    implementation 'org.telegram:telegrambots-meta:6.5.0'
+
+    // Логирование
+    implementation 'ch.qos.logback:logback-classic:1.5.6'
+    implementation 'org.slf4j:slf4j-api:2.0.12'
 }
 
-test {
+tasks.named('test') {
     useJUnitPlatform()
 }
+
+// Сборка номера версии
+def buildNumberFile = file('buildNumber')
+def buildNumber = buildNumberFile.exists() ? buildNumberFile.text.toInteger() + 1 : 1
+buildNumberFile.text = buildNumber.toString()
+
+version = buildNumber.toString()
+
+// Настройки для сборки стандартного JAR
+java {
+    withSourcesJar()  // JAR с исходниками
+    withJavadocJar()  // JAR с документацией
+}
+
+jar {
+    archiveBaseName.set(rootProject.name)
+    archiveVersion.set(buildNumber.toString())
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE  // Устанавливаем стратегию для исключения дубликатов
+    from(sourceSets.main.output) {
+        include 'org/eazytg/lib/**'
+    }
+}
+
+// Задача для создания fatJar
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'org.eazytg.Main'  // Замените на главный класс вашего приложения
+    }
+    archiveBaseName.set("${rootProject.name}-all")  // Имя для fatJar
+    archiveVersion.set(version.toString())
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE  // Добавляем стратегию для исключения дубликатов
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+// Добавление зависимости сборки от fatJar, чтобы он собирался вместе с build
+build.dependsOn fatJar
+
+// Очистка перед сборкой
+tasks.clean.doFirst {
+    delete 'build/libs', 'buildNumber'
+}
+
