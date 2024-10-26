@@ -42,4 +42,4 @@ bin/
 .DS_Store
 
 ### Project ###
-config.properties
+# config.properties
