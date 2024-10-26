@@ -1,8 +1,10 @@
 package org.eazytg;
+import org.eazytg.lib.Button;
+import org.eazytg.lib.Logs;
+import org.eazytg.lib.Telegram;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package org.eazytg;
+package org.eazytg.lib;
 
 public class Button {
     private String text;

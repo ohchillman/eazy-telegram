@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Default log level -->
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- Console appender for logging to the console -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Example -->
+    <logger name="com.example" level="debug">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+</configuration>

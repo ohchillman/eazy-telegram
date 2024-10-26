@@ -1,4 +1,4 @@
-package org.eazytg;
+package org.eazytg.lib;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class Logs {
 
     private static void logWithCallerInfo(String level, Object chatId, Object message) {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        StackTraceElement caller = stackTrace[3]; // 3-й элемент стека вызовов - это вызывающий метод
+        StackTraceElement caller = stackTrace[3];
         String callerClass = caller.getClassName();
         String callerMethod = caller.getMethodName();
 
