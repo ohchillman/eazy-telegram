@@ -2,10 +2,11 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'java-library'
+    id 'application'
 }
 
 group = 'org.eazytg'
-version = '1.0.5'
+version = '1.0.6'
 
 repositories {
     mavenCentral()
@@ -18,20 +19,19 @@ dependencies {
     api 'org.slf4j:slf4j-api:2.0.12'
 }
 
+application {
+    mainClass = 'org.eazytg.Main' // Убедитесь, что путь правильный и Main находится в org/eazytg
+}
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java/org/eazytg/lib'] // Указываем путь только к lib
-        }
-    }
+tasks.withType(Jar) {
+    exclude('org/eazytg/Main.class', 'org/eazytg/ChatBot.class')
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifactId = 'eazy-telegram' // Измените на строчные буквы
+            artifactId = 'eazy-telegram'
         }
     }
     repositories {
