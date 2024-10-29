@@ -53,7 +53,7 @@ public class ChatBot extends TelegramLongPollingBot {
     }
 
     private void messageHandler(String userText, long chatId, String userName) {
-
+        // Test
     }
 
     private void callbackHandler(Update update, String callbackData, long chatId) {
