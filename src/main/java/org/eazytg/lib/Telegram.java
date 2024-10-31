@@ -273,14 +273,12 @@ public class Telegram {
         EditMessageText editMessageText = new EditMessageText();
         editMessageText.setParseMode("HTML");
 
-        if (userId instanceof Long) {
-            editMessageText.setChatId(userId.toString());
-        } else if (userId instanceof String) {
-            editMessageText.setChatId((String) userId);
-        } else {
+        if (!(userId instanceof Long || userId instanceof String)) {
             Logs.error(userId, "userId must be either Long or String");
+            return;
         }
 
+        editMessageText.setChatId(userId.toString());
         editMessageText.setMessageId(messageId);
         editMessageText.setText(newText);
         editMessageText.setReplyMarkup(keyboardMarkup);
@@ -295,18 +293,17 @@ public class Telegram {
     /*
         Method for editing media
         The method takes the bot, the userID, messageID to be edited, the new caption, the URL of the media and new keyboard
+        Supported media formats: .jpg, .jpeg, .png, .mp4, .avi, .mov
      */
     public static void editMedia(TelegramLongPollingBot bot, Object userId, int messageId, String caption, String mediaUrl, InlineKeyboardMarkup keyboardMarkup) {
         EditMessageMedia editMessageMedia = new EditMessageMedia();
 
-        if (userId instanceof Long) {
-            editMessageMedia.setChatId(userId.toString());
-        } else if (userId instanceof String) {
-            editMessageMedia.setChatId((String) userId);
-        } else {
+        if (!(userId instanceof Long || userId instanceof String)) {
             Logs.error(userId, "userId must be either Long or String");
+            return;
         }
 
+        editMessageMedia.setChatId(userId.toString());
         editMessageMedia.setMessageId(messageId);
 
         if (mediaUrl.endsWith(".jpg") || mediaUrl.endsWith(".jpeg") || mediaUrl.endsWith(".png")) {
@@ -341,14 +338,12 @@ public class Telegram {
     public static void deleteMessage(TelegramLongPollingBot bot, Object userId, int messageId) {
         DeleteMessage deleteMessage = new DeleteMessage();
 
-        if (userId instanceof Long) {
-            deleteMessage.setChatId(userId.toString());
-        } else if (userId instanceof String) {
-            deleteMessage.setChatId((String) userId);
-        } else {
+        if (!(userId instanceof Long || userId instanceof String)) {
             Logs.error(userId, "userId must be either Long or String");
+            return;
         }
 
+        deleteMessage.setChatId(userId.toString());
         deleteMessage.setMessageId(messageId);
 
         try {
