@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.eazytg.lib.TelegramBotUtils.validateChatId;
+
 public class Telegram {
 
     /*
@@ -36,12 +38,10 @@ public class Telegram {
     public static Message sendMessage(TelegramLongPollingBot bot, Object userId, String messageText, Object keyboardMarkup, Integer replyToMessageId) {
         SendMessage message = new SendMessage();
 
-        if (!(userId instanceof Long || userId instanceof String)) {
-            Logs.error(userId, "userId must be either Long or String");
-            return null;
-        }
+        String chatId = validateChatId(userId);
+        if (chatId == null) return null;
 
-        message.setChatId(userId.toString());
+        message.setChatId(chatId);
         message.setParseMode("HTML");
         message.setText(messageText);
         message.setReplyMarkup(keyboardMarkup instanceof InlineKeyboardMarkup ? (InlineKeyboardMarkup) keyboardMarkup : (ReplyKeyboardMarkup) keyboardMarkup);
@@ -66,12 +66,10 @@ public class Telegram {
     public static Message sendPhoto(TelegramLongPollingBot bot, Object userId, String messageText, String photoUrl, Object keyboardMarkup, Integer replyToMessageId) {
         SendPhoto message = new SendPhoto();
 
-        if (!(userId instanceof Long || userId instanceof String)) {
-            Logs.error(userId, "userId must be either Long or String");
-            return null;
-        }
+        String chatId = validateChatId(userId);
+        if (chatId == null) return null;
 
-        message.setChatId(userId.toString());
+        message.setChatId(chatId);
         message.setParseMode("HTML");
         message.setPhoto(new InputFile(photoUrl));
         message.setCaption(messageText);
@@ -103,10 +101,8 @@ public class Telegram {
 
         SendMediaGroup mediaGroup = new SendMediaGroup();
 
-        if (!(userId instanceof Long || userId instanceof String)) {
-            Logs.error(userId, "userId must be either Long or String");
-            return null;
-        }
+        String chatId = validateChatId(userId);
+        if (chatId == null) return null;
 
         List<InputMedia> media = new ArrayList<>();
         for (int i = 0; i < photoUrls.size(); i++) {
@@ -120,7 +116,7 @@ public class Telegram {
             media.add(photo);
         }
 
-        mediaGroup.setChatId(userId.toString());
+        mediaGroup.setChatId(chatId);
         mediaGroup.setMedias(media);
 
         if (replyToMessageId != null) {
@@ -145,12 +141,10 @@ public class Telegram {
     public static Message sendDocument(TelegramLongPollingBot bot, Object userId, String messageText, String documentUrl, Object keyboardMarkup, Integer replyToMessageId) {
         SendDocument message = new SendDocument();
 
-        if (!(userId instanceof Long || userId instanceof String)) {
-            Logs.error(userId, "userId must be either Long or String");
-            return null;
-        }
+        String chatId = validateChatId(userId);
+        if (chatId == null) return null;
 
-        message.setChatId(userId.toString());
+        message.setChatId(chatId);
         message.setParseMode("HTML");
         message.setDocument(new InputFile(documentUrl));
         message.setCaption(messageText);
@@ -273,12 +267,10 @@ public class Telegram {
         EditMessageText editMessageText = new EditMessageText();
         editMessageText.setParseMode("HTML");
 
-        if (!(userId instanceof Long || userId instanceof String)) {
-            Logs.error(userId, "userId must be either Long or String");
-            return;
-        }
+        String chatId = validateChatId(userId);
+        if (chatId == null) return;
 
-        editMessageText.setChatId(userId.toString());
+        editMessageText.setChatId(chatId);
         editMessageText.setMessageId(messageId);
         editMessageText.setText(newText);
         editMessageText.setReplyMarkup(keyboardMarkup);
@@ -298,12 +290,10 @@ public class Telegram {
     public static void editMedia(TelegramLongPollingBot bot, Object userId, int messageId, String caption, String mediaUrl, InlineKeyboardMarkup keyboardMarkup) {
         EditMessageMedia editMessageMedia = new EditMessageMedia();
 
-        if (!(userId instanceof Long || userId instanceof String)) {
-            Logs.error(userId, "userId must be either Long or String");
-            return;
-        }
+        String chatId = validateChatId(userId);
+        if (chatId == null) return;
 
-        editMessageMedia.setChatId(userId.toString());
+        editMessageMedia.setChatId(chatId);
         editMessageMedia.setMessageId(messageId);
 
         if (mediaUrl.endsWith(".jpg") || mediaUrl.endsWith(".jpeg") || mediaUrl.endsWith(".png")) {
@@ -338,12 +328,10 @@ public class Telegram {
     public static void deleteMessage(TelegramLongPollingBot bot, Object userId, int messageId) {
         DeleteMessage deleteMessage = new DeleteMessage();
 
-        if (!(userId instanceof Long || userId instanceof String)) {
-            Logs.error(userId, "userId must be either Long or String");
-            return;
-        }
+        String chatId = validateChatId(userId);
+        if (chatId == null) return;
 
-        deleteMessage.setChatId(userId.toString());
+        deleteMessage.setChatId(chatId);
         deleteMessage.setMessageId(messageId);
 
         try {
