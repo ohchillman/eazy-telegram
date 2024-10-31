@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.eazytg.lib.TelegramBotUtils.getInputMedia;
 import static org.eazytg.lib.TelegramBotUtils.validateChatId;
 
 public class Telegram {
@@ -296,21 +297,9 @@ public class Telegram {
         editMessageMedia.setChatId(chatId);
         editMessageMedia.setMessageId(messageId);
 
-        if (mediaUrl.endsWith(".jpg") || mediaUrl.endsWith(".jpeg") || mediaUrl.endsWith(".png")) {
-            InputMediaPhoto photo = new InputMediaPhoto();
-            photo.setMedia(mediaUrl);
-            photo.setCaption(caption);
-            photo.setParseMode("HTML");
-            editMessageMedia.setMedia(photo);
-        } else if (mediaUrl.endsWith(".mp4") || mediaUrl.endsWith(".avi") || mediaUrl.endsWith(".mov")) {
-            InputMediaVideo video = new InputMediaVideo();
-            video.setMedia(mediaUrl);
-            video.setCaption(caption);
-            video.setParseMode("HTML");
-            editMessageMedia.setMedia(video);
-        } else {
-            throw new IllegalArgumentException("Unsupported media format");
-        }
+        InputMedia media = getInputMedia(caption, mediaUrl);
+        editMessageMedia.setMedia(media);
+        editMessageMedia.setReplyMarkup(keyboardMarkup);
 
         editMessageMedia.setReplyMarkup(keyboardMarkup);
 
