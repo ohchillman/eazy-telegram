@@ -53,7 +53,14 @@ public class ChatBot extends TelegramLongPollingBot {
     }
 
     private void messageHandler(String userText, long chatId, String userName) {
-        // Test
+        String audioUrl = "https://tusic.net/music/0-0-1-30447-20";
+        String photoUrl = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
+        String videoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
+
+        List<String> videoList = new ArrayList();
+        videoList.add("https://www.w3schools.com/html/mov_bbb.mp4");
+
+        Telegram.sendPhoto(this, chatId, "Test doc", videoList, null);
     }
 
     private void callbackHandler(Update update, String callbackData, long chatId) {
