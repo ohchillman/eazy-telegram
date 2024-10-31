@@ -45,3 +45,11 @@ bin/
 config.properties
 gradle.properties
 .idea/
+copyright/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+buildNumber
