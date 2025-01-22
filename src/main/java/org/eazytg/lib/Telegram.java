@@ -17,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaVideo;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -45,8 +46,15 @@ public class Telegram {
         message.setChatId(chatId);
         message.setParseMode("HTML");
         message.setText(messageText);
-        message.setReplyMarkup(keyboardMarkup instanceof InlineKeyboardMarkup ? (InlineKeyboardMarkup) keyboardMarkup : (ReplyKeyboardMarkup) keyboardMarkup);
-
+        if (keyboardMarkup != null) {
+            if (keyboardMarkup instanceof InlineKeyboardMarkup) {
+                message.setReplyMarkup((InlineKeyboardMarkup) keyboardMarkup);
+            } else if (keyboardMarkup instanceof ReplyKeyboardMarkup) {
+                message.setReplyMarkup((ReplyKeyboardMarkup) keyboardMarkup);
+            } else if (keyboardMarkup instanceof ReplyKeyboardRemove) {
+                message.setReplyMarkup((ReplyKeyboardRemove) keyboardMarkup);
+            }
+        }
         if (replyToMessageId != null) {
             message.setReplyToMessageId(replyToMessageId);
         }
@@ -74,8 +82,15 @@ public class Telegram {
         message.setParseMode("HTML");
         message.setPhoto(new InputFile(photoUrl));
         message.setCaption(messageText);
-        message.setReplyMarkup(keyboardMarkup instanceof InlineKeyboardMarkup ? (InlineKeyboardMarkup) keyboardMarkup : (ReplyKeyboardMarkup) keyboardMarkup);
-
+        if (keyboardMarkup != null) {
+            if (keyboardMarkup instanceof InlineKeyboardMarkup) {
+                message.setReplyMarkup((InlineKeyboardMarkup) keyboardMarkup);
+            } else if (keyboardMarkup instanceof ReplyKeyboardMarkup) {
+                message.setReplyMarkup((ReplyKeyboardMarkup) keyboardMarkup);
+            } else if (keyboardMarkup instanceof ReplyKeyboardRemove) {
+                message.setReplyMarkup((ReplyKeyboardRemove) keyboardMarkup);
+            }
+        }
         if (replyToMessageId != null) {
             message.setReplyToMessageId(replyToMessageId);
         }
@@ -149,8 +164,15 @@ public class Telegram {
         message.setParseMode("HTML");
         message.setDocument(new InputFile(documentUrl));
         message.setCaption(messageText);
-        message.setReplyMarkup(keyboardMarkup instanceof InlineKeyboardMarkup ? (InlineKeyboardMarkup) keyboardMarkup : (ReplyKeyboardMarkup) keyboardMarkup);
-
+        if (keyboardMarkup != null) {
+            if (keyboardMarkup instanceof InlineKeyboardMarkup) {
+                message.setReplyMarkup((InlineKeyboardMarkup) keyboardMarkup);
+            } else if (keyboardMarkup instanceof ReplyKeyboardMarkup) {
+                message.setReplyMarkup((ReplyKeyboardMarkup) keyboardMarkup);
+            } else if (keyboardMarkup instanceof ReplyKeyboardRemove) {
+                message.setReplyMarkup((ReplyKeyboardRemove) keyboardMarkup);
+            }
+        }
         if (replyToMessageId != null) {
             message.setReplyToMessageId(replyToMessageId);
         }
