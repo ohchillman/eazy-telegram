@@ -207,6 +207,25 @@ Telegram.sendPhoto(this, chatId, "Альбом фотографий", photoUrls,
 Telegram.sendDocument(this, chatId, "Документ PDF", "https://example.com/document.pdf", null, null);
 ```
 
+### Оплата через Telegram Stars
+```java
+// Отправка инвойса в Stars (XTR)
+List<LabeledPrice> prices = List.of(
+    Telegram.starsPrice("Доступ на месяц", 50) // 50 Stars
+);
+Telegram.sendStarsInvoice(this, chatId, "Подписка", "1 месяц доступа", "payload_123", prices);
+
+// Подтверждение pre-checkout запроса
+if (update.hasPreCheckoutQuery()) {
+    Telegram.answerPreCheckoutQuery(this, update.getPreCheckoutQuery().getId(), true, null);
+}
+
+// Обработка успешной оплаты
+if (update.hasMessage() && update.getMessage().hasSuccessfulPayment()) {
+    // TODO: выдать покупку
+}
+```
+
 ### Редактирование сообщения
 ```java
 Telegram.editMessage(this, chatId, messageId, "Новый текст сообщения", keyboard);

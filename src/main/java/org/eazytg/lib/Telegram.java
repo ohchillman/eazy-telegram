@@ -1,12 +1,13 @@
 package org.eazytg.lib;
 
-import org.eazytg.lib.Logs;
-import org.eazytg.lib.Button;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery;
+import org.telegram.telegrambots.meta.api.methods.invoices.CreateInvoiceLink;
+import org.telegram.telegrambots.meta.api.methods.invoices.SendInvoice;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -14,7 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
-import org.telegram.telegrambots.meta.api.objects.media.InputMediaVideo;
+import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
@@ -182,6 +183,107 @@ public class Telegram {
         } catch (TelegramApiException e) {
             Logs.error(userId, e.getMessage());
             return null;
+        }
+    }
+
+    /*
+        Telegram Stars helpers
+     */
+    public static LabeledPrice starsPrice(String label, int starsAmount) {
+        return new LabeledPrice(label, starsAmount);
+    }
+
+    public static Message sendStarsInvoice(
+            TelegramLongPollingBot bot,
+            Object userId,
+            String title,
+            String description,
+            String payload,
+            List<LabeledPrice> prices,
+            String startParameter,
+            InlineKeyboardMarkup keyboardMarkup
+    ) {
+        SendInvoice invoice = new SendInvoice();
+
+        String chatId = validateChatId(userId);
+        if (chatId == null) return null;
+
+        invoice.setChatId(chatId);
+        invoice.setTitle(title);
+        invoice.setDescription(description);
+        invoice.setPayload(payload);
+        invoice.setCurrency("XTR");
+        invoice.setPrices(prices);
+        invoice.setProviderToken("");
+        if (startParameter != null && !startParameter.isBlank()) {
+            invoice.setStartParameter(startParameter);
+        }
+        if (keyboardMarkup != null) {
+            invoice.setReplyMarkup(keyboardMarkup);
+        }
+
+        try {
+            return bot.execute(invoice);
+        } catch (TelegramApiException e) {
+            Logs.error(userId, e.getMessage());
+            return null;
+        }
+    }
+
+    public static Message sendStarsInvoice(
+            TelegramLongPollingBot bot,
+            Object userId,
+            String title,
+            String description,
+            String payload,
+            List<LabeledPrice> prices
+    ) {
+        return sendStarsInvoice(bot, userId, title, description, payload, prices, null, null);
+    }
+
+    public static String createStarsInvoiceLink(
+            TelegramLongPollingBot bot,
+            String title,
+            String description,
+            String payload,
+            List<LabeledPrice> prices
+    ) {
+        CreateInvoiceLink invoiceLink = new CreateInvoiceLink();
+
+        invoiceLink.setTitle(title);
+        invoiceLink.setDescription(description);
+        invoiceLink.setPayload(payload);
+        invoiceLink.setCurrency("XTR");
+        invoiceLink.setPrices(prices);
+        invoiceLink.setProviderToken("");
+
+        try {
+            return bot.execute(invoiceLink);
+        } catch (TelegramApiException e) {
+            Logs.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public static boolean answerPreCheckoutQuery(
+            TelegramLongPollingBot bot,
+            String preCheckoutQueryId,
+            boolean ok,
+            String errorMessage
+    ) {
+        AnswerPreCheckoutQuery answer = new AnswerPreCheckoutQuery();
+        answer.setPreCheckoutQueryId(preCheckoutQueryId);
+        answer.setOk(ok);
+        if (!ok) {
+            answer.setErrorMessage(errorMessage != null ? errorMessage : "Payment failed");
+        }
+
+        try {
+            bot.execute(answer);
+            return true;
+        } catch (TelegramApiException e) {
+            Logs.error(e.getMessage());
+            return false;
         }
     }
 
