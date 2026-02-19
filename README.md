@@ -133,6 +133,11 @@ private void messageHandler(String userText, long chatId, String userName) {
     buttons.add(new Button("Первая кнопка", "button1"));
     buttons.add(new Button("Вторая кнопка", "button2"));
     buttons.add(new Button("Ссылка", "https://telegram.org"));
+
+// Опционально: кастомный эмодзи и стиль кнопки (danger/success/primary)
+buttons.add(new Button("Опасное действие", "danger_action")
+    .withIconCustomEmojiId("5440266917482170481")
+    .withStyle(Button.Style.DANGER));
     
     // Создание клавиатуры (3 кнопки в ряд)
     InlineKeyboardMarkup keyboard = Telegram.createKeyboard(buttons, 3);

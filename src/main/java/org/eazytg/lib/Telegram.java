@@ -351,16 +351,25 @@ public class Telegram {
         int currentColumn = 0;
 
         for (int i = 0; i < buttons.size(); i++) {
-            InlineKeyboardButton button = new InlineKeyboardButton();
-            button.setText(buttons.get(i).getText());
+            Button sourceButton = buttons.get(i);
+            ExtendedInlineKeyboardButton button = new ExtendedInlineKeyboardButton();
+            button.setText(sourceButton.getText());
 
-            if (buttons.get(i).isUrl()) {
-                button.setUrl(buttons.get(i).getData());
+            if (sourceButton.isUrl()) {
+                button.setUrl(sourceButton.getData());
             } else {
-                button.setCallbackData(buttons.get(i).getData());
+                button.setCallbackData(sourceButton.getData());
             }
 
-            if (buttons.get(i).getText().length() > maxButtonLength) {
+            if (sourceButton.getIconCustomEmojiId() != null && !sourceButton.getIconCustomEmojiId().isBlank()) {
+                button.setIconCustomEmojiId(sourceButton.getIconCustomEmojiId());
+            }
+
+            if (sourceButton.getStyle() != null && !sourceButton.getStyle().isBlank()) {
+                button.setStyle(sourceButton.getStyle());
+            }
+
+            if (sourceButton.getText().length() > maxButtonLength) {
                 if (!rowInline.isEmpty()) {
                     rowsInline.add(new ArrayList<>(rowInline));
                     rowInline.clear();
